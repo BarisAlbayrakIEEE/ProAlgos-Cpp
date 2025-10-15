@@ -179,17 +179,74 @@
 #ifndef PRIMES_BY_COUNTERS_HPP
 #define PRIMES_BY_COUNTERS_HPP
 
-#include <cassert>
+#include <vector>
+typedef std::vector<std::size_t> _PN_t;
+constexpr std::size_t CEIL{ 10000000 };
+
+// Determines primes up to prime_limit and returns list of primes in a vector
+// Method:
+//     1. Assigning a counter for each prime
+//     2. Increment the counters and ispect for the equality to the corresponding prime number
+//     3. Prime counters are defined by vector of unsigned integers
+_PN_t get_primes_counter(const std::size_t &prime_limit) {
+    //  Check if larger than limit
+    if (prime_limit > CEIL) {
+        return _PN_t({});
+    }
+    
+    // Initialize two vectors for the prime numbers and the corresponding counters.
+    _PN_t prime_numbers{ 2, 3 };
+    _PN_t prime_counters{ 1, 0 };
+    std::size_t inspectable_prime_count{ 1 };
+
+    // loop to inspect each odd number for being a prime: 5, 7, 9, ...
+    for (std::size_t current_number = 5; current_number <= prime_limit; current_number += 2) {
+        // increment the counters of the current prime numbers.
+        // if any of the counters reaches the corresponding prime value,
+        // (e.g. the counter of 3 reaches to 3 or counter of 11 reaches to 11)
+        // that counter is reset to 0 and the current number is known to be a composite.
+        // Notice that the index starts from 1 omitting the counter of the prime 2.
+        bool check_prime{ true };
+        for (int i = 0; i < inspectable_prime_count; i++) {
+            ++prime_counters[i + 1];
+            if (prime_counters[i + 1] == prime_numbers[i + 1]) {
+                prime_counters[i + 1] = 0;
+                check_prime = false;
+            }
+        }
+        if (check_prime) {
+            prime_numbers.push_back(current_number);
+
+            // an optimization for square root of the limit.
+            // no need to inspect the prime numbers larger than the square root of the limit.
+            if (current_number <= std::sqrt(prime_limit)) {
+                ++inspectable_prime_count;
+                prime_counters.push_back(0);
+            }
+        }
+    }
+    return prime_numbers;
+}
+
+
+
+// *****************************************************************************
+// CAUTION:
+//   THE CODE BELOW IS FOR THE DISCUSSION RELATED TO THE LEFT SHIFT OPERATION
+//   HELD IN THE MAIN DOCUMENTATION OF THIS HEADER
+//   AND NOT INCLUDED IN THE UNIT TEST (primes_by_counters.cpp)
+// *****************************************************************************
+
+
+
 #include <cstdint>
 #include <cmath>
 #include <vector>
-#include <bitset>
 #include <algorithm>
+#include <bitset>
 
-typedef std::vector<std::size_t> _PN_t;
 typedef std::vector<uint64_t> _Packed_t;
 
-constexpr std::size_t CEIL{ 10000000 };
 constexpr std::size_t POOL_SIZE{ 4096 };
 constexpr std::size_t BLOCK_SIZE0{ 64 };
 constexpr std::size_t BLOCK_SIZE1{ 63 };
@@ -295,51 +352,6 @@ private:
     std::size_t _size_physical;
     std::size_t _offset;
 };
-
-// Determines primes up to prime_limit and returns list of primes in a vector
-// Method:
-//     1. Assigning a counter for each prime
-//     2. Increment the counters and ispect for the equality to the corresponding prime number
-//     3. Prime counters are defined by vector of unsigned integers
-_PN_t get_primes_counter(const std::size_t &prime_limit) {
-    //  Check if larger than limit
-    if (prime_limit > CEIL) {
-        return _PN_t({});
-    }
-    
-    // Initialize two vectors for the prime numbers and the corresponding counters.
-    _PN_t prime_numbers{ 2, 3 };
-    _PN_t prime_counters{ 1, 0 };
-    std::size_t inspectable_prime_count{ 1 };
-
-    // loop to inspect each odd number for being a prime: 5, 7, 9, ...
-    for (std::size_t current_number = 5; current_number <= prime_limit; current_number += 2) {
-        // increment the counters of the current prime numbers.
-        // if any of the counters reaches the corresponding prime value,
-        // (e.g. the counter of 3 reaches to 3 or counter of 11 reaches to 11)
-        // that counter is reset to 0 and the current number is known to be a composite.
-        // Notice that the index starts from 1 omitting the counter of the prime 2.
-        bool check_prime{ true };
-        for (int i = 0; i < inspectable_prime_count; i++) {
-            ++prime_counters[i + 1];
-            if (prime_counters[i + 1] == prime_numbers[i + 1]) {
-                prime_counters[i + 1] = 0;
-                check_prime = false;
-            }
-        }
-        if (check_prime) {
-            prime_numbers.push_back(current_number);
-
-            // an optimization for square root of the limit.
-            // no need to inspect the prime numbers larger than the square root of the limit.
-            if (current_number <= std::sqrt(prime_limit)) {
-                ++inspectable_prime_count;
-                prime_counters.push_back(0);
-            }
-        }
-    }
-    return prime_numbers;
-}
 
 // Determines primes up to prime_limit and returns list of primes in a vector
 // Method:
