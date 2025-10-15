@@ -66,6 +66,7 @@ handle it from there. :smile:
   * Prime numbers
     * [Primorial](include/algorithm/number_theory/primorial.hpp) :white_check_mark:
     * [Sieve of Eratosthenes (simple)](cpp/include/algorithm/number_theory/sieve_of_eratosthenes.hpp) :white_check_mark:
+    * [Primes by Counters](cpp/include/algorithm/number_theory/primes_by_counters.hpp) :white_check_mark:
   
 * Searching
   * [Binary search](cpp/include/algorithm/searching/binary_search.hpp) :white_check_mark:
