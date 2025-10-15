@@ -111,6 +111,11 @@ add_executable(sieve_of_eratosthenes
         test/algorithm/number_theory/sieve_of_eratosthenes.cpp)
 target_link_libraries(sieve_of_eratosthenes test_runner)
 
+# Sieve of Eratosthenes
+add_executable(primes_by_counters
+        test/algorithm/number_theory/primes_by_counters.cpp)
+target_link_libraries(primes_by_counters test_runner)
+
 # ---------
 # Searching
 # ---------
